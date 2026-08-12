@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/generate-site.js"
+    "build": "node scripts/build.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.0"
+    "@supabase/supabase-js": "^2.54.0"
   }
 }
