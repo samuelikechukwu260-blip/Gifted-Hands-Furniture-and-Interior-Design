@@ -1,18 +1,10 @@
 name: Build Gifted Hands Website
 
 on:
-  repository_dispatch:
-    types:
-      - site-content-updated
-
   workflow_dispatch:
 
-  push:
-    branches:
-      - main
-
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -25,28 +17,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate static website
-        run: npm run build
+      - name: Build static website
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: npm run build
 
-      - name: Commit generated pages
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add public/
-
-          if git diff --cached --quiet; then
-            echo "No generated changes."
-          else
-            git commit -m "chore: regenerate website"
-            git push
-          fi
+      - name: Upload production website
+        uses: actions/upload-artifact@v4
+        with:
+          name: gifted-hands-production
+          path: public/
+          if-no-files-found: error
